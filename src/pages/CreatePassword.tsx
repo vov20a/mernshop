@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useCreatePasswordMutation } from '../features/mails/mailsApiSlice';
@@ -12,6 +12,9 @@ const CreatePassword: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch()
 
+
+    const [errMsg, setErrMsg] = useState('');
+
     const {
         register,
         handleSubmit,
@@ -24,27 +27,43 @@ const CreatePassword: React.FC = () => {
         mode: 'onChange',
     });
 
-    const [createPassword, { isLoading, isError, error }] = useCreatePasswordMutation()
+
+    const [createPassword, { isLoading, }] = useCreatePasswordMutation()
 
     const onSubmit = async (values: { password: string }) => {
-        const { accessToken } = await createPassword(values).unwrap() as unknown as { accessToken: string };
-        if (accessToken) {
+        try {
+            const { accessToken } = await createPassword(values).unwrap() as unknown as { accessToken: string };
             dispatch(setCredentials({ accessToken }));
             navigate('/home')
+        } catch (err: any) {
+            if (!err.status) {
+                setErrMsg('No Server Response');
+            } else if (err.status === 400) {
+                setErrMsg('Missing  Password');
+            } else if (err.status === 401) {
+                setErrMsg('Unauthorized ');
+            } else if (err.status === 404) {
+                setErrMsg('Not found ActivationLink');
+            } else if (err.status === 408) {
+                setErrMsg('Истекло время действия ссылки');
+            }
+            else {
+                setErrMsg(err.data?.message);
+            }
         }
-    };
 
+    };
+    const errClass = errMsg ? 'errmsg' : 'offscreen';
+
+    if (isLoading) return <PulseLoader color={'#000'} className='pulse-loader' />;
 
     return (
         <section >
             <Row>
                 <Col md={12}>
-                    {isLoading && <PulseLoader color={'#000'} className='pulse-loader' />}
-                </Col>
-            </Row>
-            <Row>
-                <Col md={12}>
-                    {isError && <p className="errmsg">{error?.data?.message}</p>}
+                    <p className={errClass} aria-live="assertive">
+                        {errMsg}
+                    </p>
                 </Col>
             </Row>
             <Row className="justify-content-md-center">

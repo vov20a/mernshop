@@ -32,16 +32,16 @@ const ForgotPwd: React.FC = () => {
                 </Col>
             </Row>
             <Row>
-                <Col md={12}>
-                    {isSuccess && <h3>Mail was send to your email</h3>}
-                </Col>
+
             </Row>
             <Row>
                 <Col md={12}>
                     {isError && <p className="errmsg">{error?.data?.message}</p>}
                 </Col>
             </Row>
-            <Row className="justify-content-md-center">
+            {isSuccess ? <Col md={12}>
+                <h3>Mail was send to your email</h3>
+            </Col> : <Row className="justify-content-md-center">
                 <Col md={4}>
                     <h4 className="title text-center">
                         <span className="pull-left "><span className="text">Restore</span><span className="line"><strong>Password</strong></span></span>
@@ -68,7 +68,8 @@ const ForgotPwd: React.FC = () => {
                         </div>
                     </Form>
                 </Col>
-            </Row>
+            </Row>}
+
         </section >
     )
 };
