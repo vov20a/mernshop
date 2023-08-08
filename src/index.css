@@ -1938,6 +1938,22 @@ form.login-form p > a {
   }
 }
 @media (max-width: 480px) {
+  .table {
+    font-size: 0.7rem;
+  }
+  .table__products {
+    font-size: 0.7rem;
+  }
+  .table__orders {
+    font-size: 0.7rem;
+  }
+  .table__categories {
+    font-size: 0.7rem;
+  }
+  .table__cart {
+    font-size: 0.7rem;
+  }
+
   .header-bottom-right {
     font-size: 8px;
   }
